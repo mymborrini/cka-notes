@@ -1,0 +1,42 @@
+CLuster Architecture
+
+The purpouse of k8s is to host my applications in form of containers in an automated way, so you can easly deploy as many instances of your application
+as you need. 
+
+A k8s cluster consists of a set of nodes, phisical od virtuals. On premise or in the cloud, that hosts applications in the form of container. 
+
+There are two kinds of nodes:
+
+1 The worker nodes (host application as containers)
+2 The master node (Manage, plan, schedule and monitor nodes)
+
+The MASTER node is able to do all of this through the control plane components:
+
+1 ETCD is a database that store informations in a key-value format. Of course is not a single instance but when we talk about ETCD we always talk about
+an ETCD cluster. 
+
+2 The kube scheduler decides on which node deploy a container. This decision is made by the resources requests/limits of the containter itself, by how
+many containres that node is currently carry on and how many resources they need. Of course taints and tolerations is also important to identify the right 
+node to place the container onto.
+
+3 Node controller takes care of nodes. It's responsible for onboarding new nodes of the cluster, handling situations where nodes are unavailable
+or get destroyed
+
+4 Replication controller takes care of containers. The desired number of containers needs to be running all of the time in a replication group
+
+The last two (3-4) are wapped inside the Controller Manager
+
+5 Kube-apiserver is the component responsible for the comunication between each of the component before. It is responsible for orchestating all the operations 
+inside the cluster. It also expose the k8s API that also expose the the users. So it allows the user to interact with all the part of the k8s cluster. 
+
+Every component can be execute in a form of container and every application need to be run as a container. Therefore we need a software which is capable
+of execute containers. One of this software is docker. So we need docker or an equivalent installed on all the nodes in the cluster. 
+k8s supports different container runtime engine like containerD or rocket.
+
+THE WORKER NODES:
+If we now look better at the worker nodes we see that in each node we have:
+
+1 kubelet which is responsible to communicate with the master node. Kubelet is an agent that runs in each node of the cluster. This kubelet executes the instruction of the master node and destroys or creates the containers inside 
+the node itself. Kubelet is not just passive but active and send to the kub-apiserver informations about the nodes and the containers itself. 
+
+2 the kube-proxy which is responsible for the comunication between contaIners among different nodes.

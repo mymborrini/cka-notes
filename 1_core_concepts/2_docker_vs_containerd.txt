@@ -1,0 +1,49 @@
+Docker vs containerD
+
+STORY
+At the beginning was only docker. k8s was build to orchestate docker at the beginning. 
+k8s then introdcue a CRI Container Runtime Interface to communicate with other container engine like rocket. So CRI allows any vendor to work as a container
+runtime for k8s as long as it follow the OCI standards (Open Container Initiative).
+
+OCI consists of an imagespec and a runtimespec. Imagespec are the specification on how an image should be built and runtimespec define how any container
+should be developed. So follow CRI and OCI anyone can build a container runtime which is able to interact with k8s. So now Rocket and other conainer 
+runtime are not supported by k8s through the CRI. 
+Docker was not buit to support the CRI standards. But docker is made of different tools put them together. The buld tools, the volumes, the CLI,
+and also of course the container runtime (runC). That deamon that manages runC was called ContainerD. ContainerD is CRI compatible and can work
+directly with k8s. 
+So containerD can be used as a runtime on it's own separate from docker. So now you have contaienrd as a separate runtime. SO the support for docker 
+continues through the use of containerD.
+
+CONTAINER D
+
+ContainerD, although is part of Docker is a separate project on it's own now. SO you can install containerd on it's own without need to install
+docker itself. So if you don't need any other docker features you can just install contaienrd alone. 
+
+But wihtout docker, how do we run container with just containerd? 
+
+nerdctl is a docker like CLI for containerD and it has the benefit to give us access to the newest features implemented into ContainerD like image signing
+
+Since the nerdctl is docker equivalent you can simply use somthing like this to run a container.
+
+$ docker run --name webserver -p 80:80 -d nginx 
+=== 
+$ nerdctl run --name webserver -p 80:80 -d nginx
+
+There is another vey important tool the crictl, which is used to connect CRI compatible containers runtimes, so with a single client you can interact
+with containerD or rocket. 
+
+crictl is developed by k8s and is generally used to watch over or debugs container at runtime. So you're not supposed to create containers like you did 
+with nerdctl, it's important to remmber because it works along with the kubelet, so you can create containers with crictl, but the kubelet can decide that
+those containers are not to be there and delete them. 
+
+The commands are also docker like
+
+$ crictl ps -a 
+
+$ criclt exec -it <container id> <command>
+
+$ criclt logs <container id>
+
+Another thing is that crictl is also aware of pods
+
+$ crictl pods 
