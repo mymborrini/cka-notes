@@ -1,0 +1,49 @@
+Kube Controller Manager
+
+As mentioned before the kube controller manager manages differnet controller in k8s. A controller is a process that continuosly monitor the 
+status of a set of resources inside the k8s cluster, and brings the whole system to the desired status. 
+
+For example the node controller is responsible for monitor the status of the nodes and take the necessary actions. It does that, of course through
+the kube api-server, to communicate with every single node. 
+
+Node monitor Period: 5s
+Node monitor Grace Period: 40s
+POD Eviction Timeout: 5m
+
+The node controller monitor the status of the node every 5 seconds.
+If the Node controller does not recive any beat for a node for 40 seconds, it will marked it as UNREACHABLE.
+If the node does not come back to life within 5 minutes, it removes the pod inside that node and assign them to different nodes. If they are
+part of a replicaSet 
+
+
+The Replication Controller, monitor the status of the replica in the replicaset to be sure that the number of the pods is always the one desired.
+If a pod is deleted it creates a new one. 
+
+How do I see this controller, and where they are located in the cluster? They are all packaged into the kube-controller-manager, when you install 
+the kube-controller-manager the different controllers will be deployed as well.
+
+kubec-controller-manager.service
+ExecStart=/usr/local/bin/kube-controller-manager \
+...
+--controllers *
+...
+
+By default all controllers are enabled, but you can specify only a set of them, or disable with a dash in front some of them. So in case some
+of my contoller seems not to exists this could be a good starting point to search.
+
+How do you view the kube-controller-manager options, again it dependends on how you set up your cluster.
+
+If you use kubeadm
+
+$ kubectl get pods -n kube-system
+kube-controller-manager-master 
+
+and you can see the options at
+
+$ cat /etc/kubernetes/manifests/kube-controller-manager.yaml
+
+Or if you set up it manually.
+
+$ cat /etc/systemd/system/kube-controller-manager.service
+
+cat /etc/systemd/system/kube-controller-manager.service 

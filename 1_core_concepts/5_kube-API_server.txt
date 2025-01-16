@@ -1,0 +1,74 @@
+Kube API Server
+
+When you run the kubectl command it will reach the kube-apiserver.
+
+So you make the request:
+
+$ kubectl get nodes
+
+The request is received from the kube-apiserver and then it is foward to the etcd database that return you a response
+
+NAME        STATUS      Roles         
+master      Ready       master
+node01      Ready       <none>
+
+You can of course hit the api directly by sending a request.
+
+Let's look at an example of creating a pod. So as before the request:
+
+1 The user is authenticate
+2 The request is validate 
+3 The kube-apiserver creates a pod without assing it to a node  
+4 Save it in the ETCD server        (Pending)
+5 Inform the user that the pod is been created 
+6 The scheduler monitor the etcd cluser and see that there is a pod without node to be deployed.    
+7 The scheduler identifies the best node to put the new pod on and communicate the information to the apiserver
+8 the apiserver update the etcd cluster     (Init)
+9 the api server pass all the information to the kubelet of the proper worker node 
+10 The kubelet creates the pod on the node and instruct the container runtime engine to deploy the application image
+11 Once done the kubelet inform the kube-apiserver that save the result in the etc cluster 
+
+
+N.B. 
+
+Kube apiserver is the only component that interact directly to the etcd datasource.
+
+If you bootstrap your cluster using kubeadm tool, you don't need to know this. If you bootstrap it manually the kube-apiserver is a repository
+available in the kubernetes page. Download it and configure it to run as a service on your k8s master node. 
+
+kube-apiserver.service
+ExecStart=/usr/local/bin/kube-apiserver \
+...
+ --etcd-cafile=/var/lib/kubernetes/ca.pem \
+ --etcd-certfile=/var/lib/kubernetes/kubernetes.pem \
+ --etcd-keyfile=/var/libe/kubernetes/kubernetes-key.pem \
+...
+ --kubelet-cafile=/var/lib/kubernetes/ca.pem \
+ --kubelet-certfile=/var/lib/kubernetes/kubernetes.pem \
+ --kubelet-keyfile=/var/libe/kubernetes/kubernetes-key.pem \
+ --kubelet-https=true \
+...
+ --etcd-servers=https://127.0.0.1:2379/ \
+...
+
+As you can see a lot of parameters in the service are certificates.
+
+Now how do you view the kube-apiserver options in a cluster? It depends on how you bootstrap your cluster.
+
+If you set up with the kubeadm tool 
+$ kubectl get pods -n kube-system 
+NAME
+kube-apiserver-master 
+
+You can see the options here:
+$ cat /etc/kubernetes/manifests/kube-apiserver.yaml
+
+If you bootstrap a manual environment
+$ cat /etc/systemd/system/kube-apiserver.service 
+
+Or if it is running, you can even check at the process
+
+$ ps aux | grep kube-apiserver 
+...
+
+

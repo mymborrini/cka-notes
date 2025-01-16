@@ -1,2 +1,89 @@
 ETCD
 
+Etcd is a distributed reliable key-value store that is simple secure and fast
+
+key-value store: means that you store.
+
+Let's considert the difference with a simple table
+
+
+Name            Age     Location    Salary      Grade
+------------------------------------------------------
+John Doe        45      New York    5000
+Dave Smith      34      New York    4000
+Aryan Kumar     10      New York                A 
+Lauren ROb      13      Bangalore               C 
+
+
+As you can see Salary and Grade occupied a lot of null space, tha tabular format for this kind of data leaves to a lot of empty cell. 
+A key value stores information in a document or pages like the following
+
+key             value
+Name            John Doe
+Age             45
+Location        New York
+Salary          5000
+
+
+key             value
+Name            Dave Smith
+Age             34
+Location        New York
+Salary          4000
+
+key             value
+Name            Aryan Kumar
+Age             10
+Location        New York
+Grade           A
+
+
+key             value
+Name            Lauren ROb
+Age             13
+Location        Bangalore
+Grade           C 
+
+
+All the information about that individual is stored in that document. The advantage is that changing to one file does not change the others.
+
+INSTALL ETCD
+You can run etcd as a service and manage it using systemctl.
+
+When started etcd run and listen on port 2379.
+
+A default client that comes with etcd is the etcd default client etcdctl
+
+
+To set a key value pair
+
+$ etcdctl set key1 value1 
+
+etcd comes with two version: version 2 or version 3. To figure out which one of this the client is configured to communicate
+
+$ etcdctl --version
+etcdctl version: 3.3.1
+API version 2
+
+In this case even if etcdctl version is set to 3 is important to note that API version is set to 2. 
+So in the end the answer to our question is 2, etcdctl is configured to communicate with API version 2
+
+To force etcdctl to work with version 3
+
+$ export ETCDCTL_API=3
+$ ./etcdctl version
+etcdctl version: 3.3.1
+API version 3.3
+
+So with version 3, the command to set a value
+$ etcdctl put key1 value1
+
+$ etcdctl get key1
+
+
+
+
+
+
+
+
