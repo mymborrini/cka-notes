@@ -1,0 +1,37 @@
+Node selectors
+
+Consider the following example:
+
+3 Nodes, once with larger resources and two (equals) with smaller resources.
+
+You have 3 workloads, the data-work should be places in the node1 since is the only one who can manage it in case it requires more resources.
+
+There is two ways of achieving it. The first is to use node selectors, and the other is to use nodeAffinity
+
+apiVersion: v1
+kind: Pod 
+metadata: 
+  name: nginx
+  lables: 
+    name: nginx
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    ports:
+    - containerPort: 8080
+  nodeSelector:
+    size: Large 
+
+In this case size Large are labels assign to the node. To use nodeSelector you have first labeled your node prior to create your pod.
+
+$ kubectl label node <node-name> <label-key>=<label-value>
+
+$ k label node node-1 size=Large 
+
+Now when the pod is created it is placed on node1 as desired. 
+
+nodeSelector works well if the requirement is simple like in this case, but what abot something like this:
+
+place this pods in a node which has labels Large or Medium, or place a pods in a any nodes which are not SMALL. You have to use nodeAffinity
+

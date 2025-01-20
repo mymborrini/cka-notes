@@ -1,0 +1,5 @@
+pods
+
+Pods are used to manage the concept of sidecontainer, containers that have to share the same lifecycle of the main container.
+Container inside a pod share the same storage the same network namespace.
+

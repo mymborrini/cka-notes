@@ -1,0 +1,68 @@
+Taints And tolerations
+
+
+There are used to restricts what pods are placed in what nodes. 
+
+A taint is like a repellent, you spray this repellent to a node in order to avoid pods to be placed upon that node.
+
+For a pod to be able to be placed upon such a node, the pods itself should have a toleration for that particular repellent (particular taint)
+
+So if a pod can be placed upon a node is something decided by 2 things:
+
+ . The taint of the node
+ . The toleration of the pod
+
+
+How do you do this?
+
+$ kubeclt taints nodes node-name key=value:taint-effect
+
+
+There are 3 taint effect:
+NoSchedule, which means that the pods will not schedule on the node.
+PreferNoSchedule, which works on the rank of the nodes, during the scheduler process givin this nodes a low score. 
+NoExecute, which means new pods will not schedule on the node and existing pod will be evicted if they don't have tolerations to that taint
+
+Example:
+
+$ kubectl taint nodes node1 app=blue:NoSchedule 
+
+To add toleration to a pod 
+
+apiVersion: v1
+kind: Pod 
+metadata: 
+  name: nginx
+  lables: 
+    name: nginx
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    ports:
+    - containerPort: 8080
+  tolerations:
+  - key: "app"
+    operator: "Equal"
+    value: "blue"
+    effect: "NoSchedule"
+
+Remember all these values need to be wrapped in double quotes
+
+
+The NoExecute effect means that any pods inside the node will be evicted aka killed.
+
+N.B. Taints prevent pods to be placed on a node but there is no guarantee that a pod with the correct toleration will be placed on the node 
+we taint, it means that it can be placed on that node, but there is a possibility that it could be placed on a different node as well which
+have no taints. So taints and tolerations does not tell a pod to go to a particular node; it just tell node to just accept pods for tolerations.
+
+If your requirement is to restirct a pod to certain nodes, this is done through nodeAffinity.
+
+N.B.
+
+WHen the k8s cluster is set up a taint is placed on the master node, this prevents any pods to be schedule on the master node. 
+You can check it!
+
+$ k describe node kubemaster | grep Taint
+
+A best practice is to not deploy workloads on the master server. 

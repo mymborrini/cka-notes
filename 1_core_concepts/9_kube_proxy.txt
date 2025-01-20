@@ -1,0 +1,26 @@
+Kube Proxy
+
+
+WIthin a k8s cluster every pod can reach any other pods. This is accomplish by deploying a pod network across the cluster. Throught this network 
+pods are able to communicate with each other. As you know when a pod tries to communicate with another pod it goes through a service.
+
+But what is this service? This service cannot join the pod network because is not a container, is a virtual component that only lives in the k8s
+memory. The service is accessible from every nodes in the cluster. How is that achive? Throught kube Proxy.  
+
+Kube Proxy is a process that runs on each node in a k8s cluster. It's job is looking for new services and every time a new service is created,
+it creates the appropriate rules on each node to forward traffic to those services to the backend pods. One way to do this is using iptables rules.
+
+So for example if the pods A (10.32.0.15) needs to connect to pod B (10.32.0.14) through the sercvice (10.96.0.12). Note that the ip of the service
+is not in the same network. It creates an iptable rule to forward the traffic heading to the ip of the service (10.96.0.12) to the ip
+of the actual pod (10.32.0.15)
+
+
+INSTALLATION
+
+you can download the proxy and run it as a service
+
+kube-proxy.service
+ExecStart=/usr/local/bin/kube-proxy \
+ ..
+
+The kubeadm tool deploy kube-proxy on each nodes. In fact is deployed as a daemonset, so each node will have excatly one pod

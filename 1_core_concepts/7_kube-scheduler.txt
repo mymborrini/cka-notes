@@ -1,2 +1,45 @@
 Kube scheduler
 
+The scheduler is only responsible for deciding which pods goes on which nodes. It doesn't actually place the pods on the node. That's the job of the kubelet,
+The scheduler decides that depending on some criteria
+
+For example we have a pod which requires at least 10 cpu, it goes through all the nodes to find the right one
+
+
+-----      -----      -----      -----      
+
+ 4          4          12         16         
+
+-----      -----      -----      -----      
+
+1) So firstable it filter the nodes, based on the request cpu
+
+-----      -----          
+
+ 12         16   
+
+-----      -----
+
+2) It ranks the node and score a 0-10, for example the scheduler calcutate the resource on the node that will be free after placing the pod
+in the node. In this case the first will have 2 cpu the other one will have 6. Since 6 > 2 The 16th cpu node wins. 
+
+
+Of course you can configure the scheduler behaviour by using tains/tolerations, node affinity etc..
+
+
+As always you can simply download it from the k8s release install it and running as a service.
+
+kube-scheduler.service
+ExecStart=/usr/local/bin/kube-scheduler \
+ --config=/etc/kubernetes/config/kube-scheduler.yaml \ 
+ ..
+
+
+How do you view the options? Again if you set it up using kubeadm 
+
+$ cat /etc/kubernetes/manifests/kube-scheduler.yaml
+
+As always you can see the actual optiosn by looking at the process
+
+$ ps aux | grep kube-scheduler
+

@@ -1,0 +1,7 @@
+Labels and selectors
+
+
+The selectors are used to filter the obejcts based on the labels. 
+For example
+$ k get pods -l app=App1
+

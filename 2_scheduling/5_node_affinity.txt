@@ -1,0 +1,3 @@
+Node Affinity 
+
+The main reason for nodeAffinity is to ensure pods are placed on the exact node 

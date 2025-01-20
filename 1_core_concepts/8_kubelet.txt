@@ -1,0 +1,22 @@
+kubelet
+
+The kubelet register the nodes in the k8s cluster.
+When it recive the instructions form kube-apiserver is responsible for contacting the contianer engine and creates pods.
+
+Then it monitor Node and pods and is responsible for reporting to the kube-apiserver on a timeline based. 
+
+
+INSTALLATION
+
+N.B. kubeadm does not deploy kubelets. That's a big difference from other components.
+
+You always have to install the kubelets on your worker nodes. 
+
+You have to download it and run a service
+
+kubelet.service
+ExecStart=/usr/local/bin/kubelet \
+ 
+As always you can check the existing project list and checking for kubelet 
+
+$ ps aux | grep kubelet
