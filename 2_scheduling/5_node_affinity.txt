@@ -1,3 +1,84 @@
 Node Affinity 
 
 The main reason for nodeAffinity is to ensure pods are placed on the exact node 
+
+We did the same in node selectors. But node affinity offers a more complex way
+of scheduling nodes.
+
+So if with nodeSelector we have something like this:
+
+apiVersion
+kind: Pod
+metadata:
+spec:
+  containers:
+  - name: data
+    image: data
+  nodeSelector:
+    size: Large
+
+With nodeAffinity, to do excatly the same thing:
+
+apiVersion
+kind: Pod
+metadata:
+spec:
+  containers:
+  - name: data
+    image: data
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIngoreDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: size
+            operator: In
+            values:
+            - Large 
+
+As you can see nodeSelectorTerms is an array and you will specify all the condition for the affinity
+
+If you think that your pod can be placed in Large Node or a Medium Node you can write something like this:
+
+apiVersion
+kind: Pod
+metadata:
+spec:
+  containers:
+  - name: data
+    image: data
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIngoreDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: size
+            operator: In
+            values:
+            - Large 
+            - Medium
+
+Or in this case something like this will work as well:
+
+        - matchExpressions:
+          - key: size
+            operator: NotIn
+            values:
+            - Small
+
+If you just want to check if the label size exist on the node:
+
+
+        - matchExpressions:
+          - key: size
+            operator: Exists
+
+
+What if nodeAffinity cannot match a Node with the given expresison? Or, if we have a pod already
+scheduled, what happens if someone change the label of the node in a certain point in the future.
+ 
+All of this are answered by this sentence:
+
+requiredDuringSchedulingIngoreDuringExecution
+    
+There are two states in the lifecycle of a pod when considering a nodeAffinity.  
